@@ -1,10 +1,25 @@
+
+
+using Aspire.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-builder.AddSqlServer("sql")
+
+var db =builder.AddSqlServer("sql",port:1433)	
+	
 	.WithImageTag("2022-CU16-ubuntu-22.04")
 	.WithContainerName("monitor_change")
-	.WithLifetime(ContainerLifetime.Session);
+	.WithEnvironment("ACCEPT_EULA", "Y")
+	.WithEnvironment("TrustServerCertificate","True")
+	.WithEnvironment("Encrypt", "True")
+	.WithLifetime(ContainerLifetime.Persistent)	
+	.AddDatabase("ValuesChangedMonitoring");
 
+
+builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("migration")
+	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+	.WithReference(db)
+	.WaitFor(db);
 
 builder.Build().Run();

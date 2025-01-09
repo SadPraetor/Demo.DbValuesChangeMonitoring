@@ -16,4 +16,9 @@
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.Data\Demo.DbValuesChangeMonitoring.Data.csproj" />
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.MigrationService\Demo.DbValuesChangeMonitoring.MigrationService.csproj" />
+  </ItemGroup>
+
 </Project>
