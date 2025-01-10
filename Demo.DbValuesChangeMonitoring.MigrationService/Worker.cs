@@ -6,11 +6,15 @@ namespace Demo.DbValuesChangeMonitoring.MigrationService;
 public class Worker : BackgroundService
 {
 	private readonly IServiceProvider _provider;
+	private  IHostApplicationLifetime _hostApplication;
 	private readonly ILogger<Worker> _logger;
 
-    public Worker(IServiceProvider provider, ILogger<Worker> logger)
+    public Worker(IServiceProvider provider, 
+        IHostApplicationLifetime hostApplication,
+        ILogger<Worker> logger)
     {
 		_provider = provider;
+		_hostApplication = hostApplication;
 		_logger = logger;
     }
 
@@ -25,7 +29,42 @@ public class Worker : BackgroundService
             await context.Database.MigrateAsync();
             //_logger.LogInformation("Migration applied");
         }
-        
-       
+
+        await SeedApplication(context);
+
+        _hostApplication.StopApplication();
+    }
+
+    private async Task SeedApplication(ConfigurationContext context)
+    {
+        if ((await context.ConfigurationValues.AnyAsync()))
+        {
+            return;
+        }
+
+        ConfigurationValue[] data = [
+            new ConfigurationValue()
+            {
+                Name="test1",
+                Type="decimal",
+                Value="12.9"
+            },
+            new ConfigurationValue()
+            { 
+                Name = "test2",
+                Type = "string",
+                Value= "mytestvalue"
+            },
+			new ConfigurationValue()
+			{
+				Name = "test3",
+				Type = "int",
+				Value= "3"
+			}
+		];
+
+        context.AddRange(data);
+
+        await context.SaveChangesAsync();
     }
 }
