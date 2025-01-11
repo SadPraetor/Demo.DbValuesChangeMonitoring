@@ -1,6 +1,4 @@
-
-using RabbitMQ.Client;
-using System.Text;
+using Wolverine;
 
 namespace Demo.DbValuesChangeMonitoring.NotificationService;
 
@@ -18,28 +16,29 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //await Task.Delay(Timeout.InfiniteTimeSpan, _hostApplicationLifetime.ApplicationStarted);
+        try
+        {
+            await Task.Delay(Timeout.InfiniteTimeSpan, _hostApplicationLifetime.ApplicationStarted);
+        }
+        catch
+        { 
+        }
+
         while (!stoppingToken.IsCancellationRequested)
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            //var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
-            var connection = scope.ServiceProvider.GetRequiredService<IConnection>();
+            var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+            
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 try
                 {
-                    //await messageBus.InvokeAsync(new TableChanged("configuration.ConfigurationValues"));
-                    var channel = connection.CreateModel();
-                    
-                    channel.BasicPublish("", "test", null, Encoding.UTF8.GetBytes("configuration.ConfigurationValues"));
-                    channel.Close();
-                    channel.Dispose();
-                    
+                    await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));                   
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogError(exception, "Unknown Error");
+                    _logger.LogError(exception, "Failed to publish message");
                     throw;
                 }
             }
