@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitori
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitoring.MigrationService", "Demo.DbValuesChangeMonitoring.MigrationService\Demo.DbValuesChangeMonitoring.MigrationService.csproj", "{A6A3A201-92CD-4B51-A8BB-F0C6AB1C01DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitoring.NotificationService", "Demo.DbValuesChangeMonitoring.NotificationService\Demo.DbValuesChangeMonitoring.NotificationService.csproj", "{481B41A4-FEDF-435E-B1DB-BDC682EEBE10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{A6A3A201-92CD-4B51-A8BB-F0C6AB1C01DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6A3A201-92CD-4B51-A8BB-F0C6AB1C01DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6A3A201-92CD-4B51-A8BB-F0C6AB1C01DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481B41A4-FEDF-435E-B1DB-BDC682EEBE10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481B41A4-FEDF-435E-B1DB-BDC682EEBE10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481B41A4-FEDF-435E-B1DB-BDC682EEBE10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481B41A4-FEDF-435E-B1DB-BDC682EEBE10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

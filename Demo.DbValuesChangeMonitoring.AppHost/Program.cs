@@ -22,4 +22,10 @@ builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("mig
 	.WithReference(db)
 	.WaitFor(db);
 
+builder.AddRabbitMQ("rmq")	
+	.WithImageTag("4.0.5-alpine")
+	.WithManagementPlugin()
+	.WithLifetime(ContainerLifetime.Session)	
+	.WaitFor(db);
+
 builder.Build().Run();
