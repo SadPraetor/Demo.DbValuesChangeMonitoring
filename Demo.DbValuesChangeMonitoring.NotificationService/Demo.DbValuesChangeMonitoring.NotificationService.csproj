@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Aspire.RabbitMQ.Client" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.Data\Demo.DbValuesChangeMonitoring.Data.csproj" />
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.ServiceDefaults\Demo.DbValuesChangeMonitoring.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

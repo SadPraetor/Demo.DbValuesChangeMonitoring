@@ -22,10 +22,20 @@ builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("mig
 	.WithReference(db)
 	.WaitFor(db);
 
-builder.AddRabbitMQ("rmq")	
+var rmq = builder.AddRabbitMQ("rmq")	
 	.WithImageTag("4.0.5-alpine")
-	.WithManagementPlugin()
-	.WithLifetime(ContainerLifetime.Session)	
+	.WithManagementPlugin(55832)
+	.WithLifetime(ContainerLifetime.Persistent)	
+	.PublishAsConnectionString()
 	.WaitFor(db);
+
+//var test = rmq.PublishAsConnectionString();
+
+builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_NotificationService>("notificationservice")
+	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+	.WithReference(rmq)
+	.WithReference(db)
+	.WaitFor(rmq);
+	
 
 builder.Build().Run();

@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.Data\Demo.DbValuesChangeMonitoring.Data.csproj" />
     <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.MigrationService\Demo.DbValuesChangeMonitoring.MigrationService.csproj" />
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.NotificationService\Demo.DbValuesChangeMonitoring.NotificationService.csproj" />
   </ItemGroup>
 
 </Project>
