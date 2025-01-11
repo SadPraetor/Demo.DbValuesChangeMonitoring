@@ -25,7 +25,7 @@ builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("mig
 var rmq = builder.AddRabbitMQ("rmq")	
 	.WithImageTag("4.0.5-alpine")
 	.WithManagementPlugin(55832)
-	.WithLifetime(ContainerLifetime.Persistent)	
+	.WithLifetime(ContainerLifetime.Persistent)		
 	.PublishAsConnectionString()
 	.WaitFor(db);
 
