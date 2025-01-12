@@ -1,6 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using JasperFx.CodeGeneration.Model;
+using Microsoft.Data.SqlClient;
 using Optional;
+using System.Diagnostics;
 using System.Text;
+using System.Transactions;
 
 namespace Demo.DbValuesChangeMonitoring.NotificationService
 {
@@ -30,7 +33,7 @@ namespace Demo.DbValuesChangeMonitoring.NotificationService
 			_logger = logger;
 		}
 
-		public async Task<Option<string>> ReadQueueAsync(CancellationToken cancellationToken = default)
+		public async Task ProcessQueueAsync(Func<string, Task> nextStep, CancellationToken cancellationToken = default)
 		{
 			if (_sqlConnection.Value.State is not System.Data.ConnectionState.Open)
 			{
@@ -39,36 +42,50 @@ namespace Demo.DbValuesChangeMonitoring.NotificationService
 
 			while (!cancellationToken.IsCancellationRequested)
 			{
+				using var transaction = await _sqlConnection.Value.BeginTransactionAsync();
 				try
 				{
-					using var reader = await _sqlCommand.Value.ExecuteReaderAsync(cancellationToken);
-					if (await reader.ReadAsync(cancellationToken))
-					{
-						var messageBody = (byte[])reader["message_body"];
-						var message = Encoding.Unicode.GetString(messageBody);
+					var casted = transaction as SqlTransaction;
+					_sqlCommand.Value.Transaction = casted;
 
-						if(!string.IsNullOrEmpty(message))
+					byte[] messageBody = default!;
+					using (var reader = await _sqlCommand.Value.ExecuteReaderAsync(cancellationToken))
+					{
+						if (await reader.ReadAsync(cancellationToken))
 						{
-							return Option.Some(message);
+							messageBody = (byte[])reader["message_body"];
 						}
 					}
+
+					Debug.Assert(messageBody is not null);
+					var message = Encoding.Unicode.GetString(messageBody);
+
+					if (!string.IsNullOrEmpty(message))
+					{
+						await nextStep(message);							
+					}						
+					await transaction.CommitAsync();	
 				}
 				catch (SqlException ex) when (ex.Number == -2)
 				{
-
+					await transaction.RollbackAsync();
 				}
 				catch(TaskCanceledException)
 				{
-					return Option.None<string>();
+					await transaction.RollbackAsync();					
+					return;
 				}
 				catch (Exception exception)
 				{
+					await transaction.RollbackAsync();
 					_logger.LogError(exception, "Error while reading queue");
 					throw;
 				}
-			}
-
-			return Option.None<string>();
+				finally
+				{
+					_sqlCommand.Value.Transaction = null;
+				}
+			}			
 		}
 
 		public void Dispose()

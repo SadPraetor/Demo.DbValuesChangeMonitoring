@@ -44,27 +44,30 @@ public class Worker : BackgroundService
         using var scope = _serviceScopeFactory.CreateScope();
         var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
 
-        while (!stoppingToken.IsCancellationRequested)
+        Func<string, Task> nextStep = async (string message) =>
         {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
-
-            var message = await _queueConsumer.ReadQueueAsync(stoppingToken); 
-
             try
             {
-                if (message.HasValue)
+                if (!string.IsNullOrEmpty(message))
                 {
-                    await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));                    
+                    await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));
+                    _logger.LogInformation("Message published {message}", message);
                 }
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to publish message");
                 throw;
-            }            
+            }
+
+        };
+
+
+		while (!stoppingToken.IsCancellationRequested)
+        {            
+            await _queueConsumer.ProcessQueueAsync(
+                nextStep: nextStep,
+                stoppingToken); 
         }
     }
 }
