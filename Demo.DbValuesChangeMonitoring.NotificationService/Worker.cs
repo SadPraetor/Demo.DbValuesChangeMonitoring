@@ -1,36 +1,25 @@
-using Microsoft.Data.SqlClient;
-using System.Text;
 using Wolverine;
 
 namespace Demo.DbValuesChangeMonitoring.NotificationService;
 
-public class Worker : BackgroundService
+public sealed class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly IConfiguration _configuration;
+    
     private readonly QueueConsumer _queueConsumer;
     public Worker(IServiceScopeFactory serviceScopeFactory, 
         QueueConsumer queueConsumer,
-        IHostApplicationLifetime hostApplicationLifetime,
-        IConfiguration configuration,
+        IHostApplicationLifetime hostApplicationLifetime,       
         ILogger<Worker> logger)
     {
 		_serviceScopeFactory = serviceScopeFactory;
 		_queueConsumer = queueConsumer;
-		_hostApplicationLifetime = hostApplicationLifetime;
-		_configuration = configuration;
+		_hostApplicationLifetime = hostApplicationLifetime;		
 		_logger = logger;
     }
 
-    private static string sqlQuery = """
-        WAITFOR (
-            RECEIVE TOP(1)
-                message_body
-            FROM ValuesChangeEventQueue
-        ), TIMEOUT 90000;
-        """;
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {        
         try
@@ -47,7 +36,7 @@ public class Worker : BackgroundService
         Func<string, Task> nextStep = async (string message) =>
         {
             try
-            {
+            {               
                 if (!string.IsNullOrEmpty(message))
                 {
                     await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));
@@ -59,7 +48,6 @@ public class Worker : BackgroundService
                 _logger.LogError(exception, "Failed to publish message");
                 throw;
             }
-
         };
 
 

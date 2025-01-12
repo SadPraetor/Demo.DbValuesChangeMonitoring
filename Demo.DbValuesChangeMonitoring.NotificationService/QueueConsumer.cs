@@ -1,26 +1,23 @@
-﻿using JasperFx.CodeGeneration.Model;
-using Microsoft.Data.SqlClient;
-using Optional;
+﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
-using System.Transactions;
 
 namespace Demo.DbValuesChangeMonitoring.NotificationService
 {
-	public class QueueConsumer : IDisposable
+	public sealed class QueueConsumer : IDisposable
 	{
 		private readonly ILogger<QueueConsumer> _logger;
 		private readonly string sqlConnectionString;
-		private static string _sqlQuery = """
+		private static readonly string _sqlQuery = """
         WAITFOR (
             RECEIVE TOP(1)
                 message_body
             FROM ValuesChangeEventQueue
         ), TIMEOUT 90000;
         """;
-		private Lazy<SqlConnection> _sqlConnection;
+		private readonly Lazy<SqlConnection> _sqlConnection;
 
-		private Lazy<SqlCommand> _sqlCommand;
+		private readonly Lazy<SqlCommand> _sqlCommand;
 		public QueueConsumer(IConfiguration configuration, ILogger<QueueConsumer> logger)
 		{
 			sqlConnectionString = configuration.GetConnectionString("ValuesChangedMonitoring")!;
