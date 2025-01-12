@@ -6,14 +6,14 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 
 
-var db =builder.AddSqlServer("sql",port:1433)	
-	
+var db =builder.AddSqlServer("sql",port:1433)		
 	.WithImageTag("2022-CU16-ubuntu-22.04")
 	.WithContainerName("monitor_change")
 	.WithEnvironment("ACCEPT_EULA", "Y")
 	.WithEnvironment("TrustServerCertificate","True")
 	.WithEnvironment("Encrypt", "True")
 	.WithLifetime(ContainerLifetime.Persistent)	
+	.PublishAsConnectionString()
 	.AddDatabase("ValuesChangedMonitoring");
 
 

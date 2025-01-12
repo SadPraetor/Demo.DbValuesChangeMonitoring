@@ -3,17 +3,18 @@ using Demo.DbValuesChangeMonitoring.NotificationService;
 using Wolverine;
 using Wolverine.RabbitMQ;
 
-
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
 builder.AddServiceDefaults();
 
 builder.AddSqlServerDbContext<ConfigurationContext>("ValuesChangedMonitoring");
 
-var connectionString =new Uri( builder.Configuration.GetConnectionString("rmq")!);
+var rmqConnectionString =new Uri( builder.Configuration.GetConnectionString("rmq")!);
+var sqlConnectionString = builder.Configuration.GetConnectionString("ValuesChangedMonitoring");
+
 builder.UseWolverine(opts =>
 	{
-		opts.UseRabbitMq(connectionString)
+		opts.UseRabbitMq(rmqConnectionString)
 		.DeclareQueue("db.value_change.configuration.ConfigurationValues",opt=>
 		{
 			opt.AutoDelete = false;
@@ -26,7 +27,7 @@ builder.UseWolverine(opts =>
 
 		opts.PublishAllMessages()
 			.ToRabbitQueue("db.value_change.configuration.ConfigurationValues")
-			.UseDurableOutbox();		
+			.UseDurableOutbox();
 	}
 );
 
