@@ -5,6 +5,7 @@ using Wolverine.RabbitMQ;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
+builder.Services.AddSingleton<QueueConsumer>();
 builder.AddServiceDefaults();
 
 builder.AddSqlServerDbContext<ConfigurationContext>("ValuesChangedMonitoring");
@@ -28,6 +29,7 @@ builder.UseWolverine(opts =>
 		opts.PublishAllMessages()
 			.ToRabbitQueue("db.value_change.configuration.ConfigurationValues")
 			.UseDurableOutbox();
+		opts.Durability.Mode = DurabilityMode.Solo;
 	}
 );
 

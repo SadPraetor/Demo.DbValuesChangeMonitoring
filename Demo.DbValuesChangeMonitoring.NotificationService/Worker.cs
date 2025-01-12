@@ -10,12 +10,15 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IConfiguration _configuration;
+    private readonly QueueConsumer _queueConsumer;
     public Worker(IServiceScopeFactory serviceScopeFactory, 
+        QueueConsumer queueConsumer,
         IHostApplicationLifetime hostApplicationLifetime,
         IConfiguration configuration,
         ILogger<Worker> logger)
     {
 		_serviceScopeFactory = serviceScopeFactory;
+		_queueConsumer = queueConsumer;
 		_hostApplicationLifetime = hostApplicationLifetime;
 		_configuration = configuration;
 		_logger = logger;
@@ -29,8 +32,7 @@ public class Worker : BackgroundService
         ), TIMEOUT 90000;
         """;
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        
+    {        
         try
         {
             await Task.Delay(Timeout.InfiniteTimeSpan, _hostApplicationLifetime.ApplicationStarted);
@@ -39,6 +41,9 @@ public class Worker : BackgroundService
         { 
         }
 
+        using var scope = _serviceScopeFactory.CreateScope();
+        var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+
         while (!stoppingToken.IsCancellationRequested)
         {
             if (_logger.IsEnabled(LogLevel.Information))
@@ -46,48 +51,11 @@ public class Worker : BackgroundService
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             }
 
-            using var scope = _serviceScopeFactory.CreateScope();
-            var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
-
-            using var sqlConnection = new SqlConnection(_configuration.GetConnectionString("ValuesChangedMonitoring"));
-            await sqlConnection.OpenAsync();
-            using var sqlCommand = new SqlCommand(sqlQuery, sqlConnection);
-            sqlCommand.CommandTimeout = 95;
-
-            string? message = null;
-            try
-            {
-                using var reader = await sqlCommand.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                {
-                    var messageBody = (byte[])reader["message_body"];
-                    message = Encoding.Unicode.GetString(messageBody);
-
-                    _logger.LogInformation("Retrieved message {message}", message);
-
-                }
-            }
-            catch (SqlException ex) when (ex.Number == -2)
-            {
-
-            }
-            catch(Exception exception)
-            {
-                _logger.LogError(exception, "Error in reading from db queue");
-                throw;
-            }
-            finally
-            {
-                if (sqlConnection.State is System.Data.ConnectionState.Open)
-                {
-                    sqlConnection.Close();
-                }               
-            }
-
+            var message = await _queueConsumer.ReadQueueAsync(stoppingToken); 
 
             try
             {
-                if (!string.IsNullOrEmpty(message))
+                if (message.HasValue)
                 {
                     await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));                    
                 }
@@ -96,9 +64,7 @@ public class Worker : BackgroundService
             {
                 _logger.LogError(exception, "Failed to publish message");
                 throw;
-            }
-
-            
+            }            
         }
     }
 }
