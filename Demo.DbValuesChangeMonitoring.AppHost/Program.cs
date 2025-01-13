@@ -29,13 +29,18 @@ var rmq = builder.AddRabbitMQ("rmq")
 	.PublishAsConnectionString()
 	.WaitFor(db);
 
-//var test = rmq.PublishAsConnectionString();
 
 builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_NotificationService>("notificationservice")
 	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
 	.WithReference(rmq)
 	.WithReference(db)
 	.WaitFor(rmq);
+	
+
+builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_UI>("UI")
+	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
+	.WithReference(db)
+	.WaitFor(db);
 	
 
 builder.Build().Run();

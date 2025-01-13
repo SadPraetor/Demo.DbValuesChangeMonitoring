@@ -1,0 +1,33 @@
+﻿@page "/configuration-view"
+@rendermode InteractiveServer
+
+@using Demo.DbValuesChangeMonitoring.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject IDbContextFactory<ConfigurationContext> _dbContextFactory
+
+
+
+<h3>Configuration</h3>
+
+@if(_data is not null)
+{
+	<ConfigurationTable Data="_data" />	
+}
+
+@code {
+	private List<ConfigurationValue>? _data = null;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			using var context = _dbContextFactory.CreateDbContext();
+			_data = await context.ConfigurationValues
+				.ToListAsync();
+			StateHasChanged();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+}

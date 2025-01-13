@@ -1,0 +1,27 @@
+﻿@using Demo.DbValuesChangeMonitoring.Data
+@using Microsoft.EntityFrameworkCore
+
+<table class="content-table">
+    <thead>
+        <tr>
+            <th>@nameof(ConfigurationValue.Key)</th>
+            <th>@nameof(ConfigurationValue.Type)</th>
+            <th>@nameof(ConfigurationValue.Value)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Data)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Type</td>
+                <td>@item.Value</td>↓
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code{
+    [Parameter, EditorRequired]
+    public List<ConfigurationValue> Data { get; set; } = default!;
+}

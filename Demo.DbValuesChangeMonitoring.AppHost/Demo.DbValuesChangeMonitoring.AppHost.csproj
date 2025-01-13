@@ -18,9 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.Data\Demo.DbValuesChangeMonitoring.Data.csproj" />
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.Data\Demo.DbValuesChangeMonitoring.Data.csproj" IsAspireProjectResource ="false"/>
     <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.MigrationService\Demo.DbValuesChangeMonitoring.MigrationService.csproj" />
     <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.NotificationService\Demo.DbValuesChangeMonitoring.NotificationService.csproj" />
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.UI\Demo.DbValuesChangeMonitoring.UI.csproj" />
   </ItemGroup>
 
 </Project>
