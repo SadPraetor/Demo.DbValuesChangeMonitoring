@@ -3,6 +3,7 @@ using Demo.DbValuesChangeMonitoring.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Demo.DbValuesChangeMonitoring.Data.Migrations
 {
     [DbContext(typeof(ConfigurationContext))]
-    partial class ConfigurationContextModelSnapshot : ModelSnapshot
+    [Migration("20250113202915_Rename")]
+    partial class Rename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

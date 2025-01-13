@@ -9,9 +9,9 @@ namespace Demo.DbValuesChangeMonitoring.Data
 		{
 			builder.ToTable(nameof(ConfigurationContext.ConfigurationValues));
 
-			builder.HasKey(x => x.Name);
+			builder.HasKey(x => x.Key);
 
-			builder.Property(x => x.Name)
+			builder.Property(x => x.Key)
 				.HasMaxLength(255);
 
 			builder.Property(x => x.Type)

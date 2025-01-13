@@ -43,24 +43,9 @@ public class Worker : BackgroundService
         }
 
         ConfigurationValue[] data = [
-            new ConfigurationValue()
-            {
-                Name="test1",
-                Type="decimal",
-                Value="12.9"
-            },
-            new ConfigurationValue()
-            { 
-                Name = "test2",
-                Type = "string",
-                Value= "mytestvalue"
-            },
-			new ConfigurationValue()
-			{
-				Name = "test3",
-				Type = "int",
-				Value= "3"
-			}
+            new ConfigurationValue("test1","decimal","12.9"),
+            new ConfigurationValue("test2","string","mytestvalue"),
+			new ConfigurationValue("test3","int","3")
 		];
 
         context.AddRange(data);
