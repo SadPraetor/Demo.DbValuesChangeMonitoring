@@ -39,7 +39,8 @@ public sealed class Worker : BackgroundService
             {               
                 if (!string.IsNullOrEmpty(message))
                 {
-                    await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));
+                    await messageBus.PublishAsync("configuration.ConfigurationValues");
+                    //await messageBus.PublishAsync(new TableChanged("configuration.ConfigurationValues"));
                     _logger.LogInformation("Message published {message}", message);
                 }
             }

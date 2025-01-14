@@ -5,9 +5,15 @@ namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 	
 	public class RabbitMQStringHandler
 	{
-		public void Handle (TableChanged message)
+		private readonly DbOptionsProvider _provider; 
+		public RabbitMQStringHandler(DbOptionsProvider provider)
+		{
+			_provider = provider;
+		}
+		public void Handle (string message)
 		{
 			Console.WriteLine(message);
+			_provider.Reload(message);
 		}
 	}
 }

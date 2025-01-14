@@ -1,29 +1,45 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 
 namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 {
 	public class DbOptionsProvider : ConfigurationProvider
 	{
-		private readonly string _connectionString;
-		
+		private readonly Uri _rmqConnectionString;
+		private readonly string _sqlConnectionString;
+		private readonly IHost _host;
 
-		public DbOptionsProvider(string connectionString)
+		public DbOptionsProvider(Uri rmqConnectionString, string sqlConnectionString)
 		{
-			_connectionString = connectionString;
-			
+			_rmqConnectionString = rmqConnectionString;
+			_sqlConnectionString = sqlConnectionString;
+			var builder = Host.CreateDefaultBuilder();
+			builder.ConfigureServices(sp => sp.AddSingleton<DbOptionsProvider>(this));
+			builder.UseWolverine(opt =>
+			{
+				opt.UseRabbitMq(rmqConnectionString)
+					.DisableDeadLetterQueueing();
+
+				opt.ListenToRabbitQueue("db.value_change.configuration.ConfigurationValues");
+
+			});
+			_host = builder.Start();
 		}
 
-		private void Reload(object sender)
+		public void Reload(object sender)
 		{
-			
+			Load();
 			OnReload();
 		}
 
 		public override void Load()
 		{
-			using (var connection = new SqlConnection(_connectionString))
+			using (var connection = new SqlConnection(_sqlConnectionString))
 			{
 				connection.Open();
 
@@ -48,7 +64,8 @@ namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 
 		public void Dispose()
 		{
-			
+			_host?.StopAsync();
+			_host?.Dispose();
 		}
 	}
 }

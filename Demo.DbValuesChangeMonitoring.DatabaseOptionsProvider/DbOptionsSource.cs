@@ -4,16 +4,18 @@ namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 {
 	public class DbOptionsSource : IConfigurationSource
 	{
-		private readonly string _connectionString;
+		private readonly Uri _rmqConnectionString;
+		private readonly string _sqlConnectionString;
 
-		public DbOptionsSource(string connectionString)
+		public DbOptionsSource(Uri rmqConnection,string sqlConnectionString)
 		{
-			_connectionString = connectionString;
+			_rmqConnectionString = rmqConnection;
+			_sqlConnectionString = sqlConnectionString;
 		}
 
 		public IConfigurationProvider Build(IConfigurationBuilder builder)
 		{
-			return new DbOptionsProvider(_connectionString);
+			return new DbOptionsProvider(_rmqConnectionString,_sqlConnectionString);
 		}
 	}
 }
