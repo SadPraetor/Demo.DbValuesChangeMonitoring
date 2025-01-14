@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitori
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitoring.UI", "Demo.DbValuesChangeMonitoring.UI\Demo.DbValuesChangeMonitoring.UI.csproj", "{A872C62C-D562-876C-FA2F-10180B5E5AD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider", "Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider\Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider.csproj", "{9FDA7F9E-23A6-4410-A77C-8993AC6EAFFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{A872C62C-D562-876C-FA2F-10180B5E5AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A872C62C-D562-876C-FA2F-10180B5E5AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A872C62C-D562-876C-FA2F-10180B5E5AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FDA7F9E-23A6-4410-A77C-8993AC6EAFFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FDA7F9E-23A6-4410-A77C-8993AC6EAFFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FDA7F9E-23A6-4410-A77C-8993AC6EAFFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FDA7F9E-23A6-4410-A77C-8993AC6EAFFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

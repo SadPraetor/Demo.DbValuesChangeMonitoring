@@ -20,14 +20,14 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+        _logger.LogInformation("dmigration Worker running at: {time}", DateTimeOffset.Now);
         using var scope = _provider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ConfigurationContext>();
 
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Development")
         {
             await context.Database.MigrateAsync();
-            //_logger.LogInformation("Migration applied");
+            _logger.LogInformation("Migration applied");
         }
 
         await SeedApplication(context);
@@ -51,5 +51,6 @@ public class Worker : BackgroundService
         context.AddRange(data);
 
         await context.SaveChangesAsync();
+        _logger.LogInformation("Application data seeded");
     }
 }

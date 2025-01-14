@@ -17,7 +17,7 @@ var db =builder.AddSqlServer("sql",port:1433)
 	.AddDatabase("ValuesChangedMonitoring");
 
 
-builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("migration")
+var migration = builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_MigrationService>("migration")
 	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
 	.WithReference(db)
 	.WaitFor(db);
@@ -27,7 +27,7 @@ var rmq = builder.AddRabbitMQ("rmq")
 	.WithManagementPlugin(55832)
 	.WithLifetime(ContainerLifetime.Persistent)		
 	.PublishAsConnectionString()
-	.WaitFor(db);
+	.WaitFor(migration);
 
 
 builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_NotificationService>("notificationservice")
@@ -40,7 +40,7 @@ builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_NotificationService>("
 builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_UI>("UI")
 	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
 	.WithReference(db)
-	.WaitFor(db);
+	.WaitFor(migration);
 	
 
 builder.Build().Run();

@@ -1,4 +1,5 @@
 using Demo.DbValuesChangeMonitoring.Data;
+using Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider;
 using Demo.DbValuesChangeMonitoring.UI.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.AddDatabaseOptionsProvider();
 
 builder.Services.AddDbContextFactory<ConfigurationContext>(opt => 
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ValuesChangedMonitoring")));
