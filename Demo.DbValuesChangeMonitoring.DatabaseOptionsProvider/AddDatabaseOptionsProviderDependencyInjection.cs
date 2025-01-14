@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 {
@@ -13,6 +15,15 @@ namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 				throw new ArgumentNullException("Missing connection string");
 			}
 			builder.Configuration.Add(new DbOptionsSource(connectionString));
+			var rmqConnectionString = new Uri(builder.Configuration.GetConnectionString("rmq")!);
+			builder.UseWolverine(opt =>
+			{
+				opt.UseRabbitMq(rmqConnectionString)
+					.DisableDeadLetterQueueing();
+
+				opt.ListenToRabbitQueue("db.value_change.configuration.ConfigurationValues");
+				
+			});
 
 			return builder;
 		}

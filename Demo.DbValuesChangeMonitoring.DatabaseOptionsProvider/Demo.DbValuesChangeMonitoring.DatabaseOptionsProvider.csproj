@@ -10,6 +10,11 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.1" />
+    <PackageReference Include="WolverineFx.RabbitMQ" Version="3.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.DbValuesChangeMonitoring.NotificationService\Demo.DbValuesChangeMonitoring.NotificationService.csproj" />
   </ItemGroup>
 
 </Project>

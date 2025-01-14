@@ -40,6 +40,7 @@ builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_NotificationService>("
 builder.AddProject<Projects.Demo_DbValuesChangeMonitoring_UI>("UI")
 	.WithEnvironment("ASPNETCORE_ENVIRONMENT", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
 	.WithReference(db)
+	.WithReference(rmq)
 	.WaitFor(migration);
 	
 
