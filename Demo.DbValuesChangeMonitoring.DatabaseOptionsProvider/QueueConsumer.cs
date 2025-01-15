@@ -1,8 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text;
 
-namespace Demo.DbValuesChangeMonitoring.NotificationService
+namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 {
 	public sealed class QueueConsumer : IDisposable
 	{

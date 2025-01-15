@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wolverine;
 using Wolverine.RabbitMQ;
@@ -18,14 +19,34 @@ namespace Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider
 			
 			builder.Configuration.Add(new DbOptionsSource(rmqConnectionUri,connectionString));
 			
-			//builder.UseWolverine(opt =>
-			//{
-			//	opt.UseRabbitMq(rmqConnectionUri)
-			//		.DisableDeadLetterQueueing();
 
-			//	opt.ListenToRabbitQueue("db.value_change.configuration.ConfigurationValues");
-				
-			//});
+			return builder;
+		}
+
+		public static IHostApplicationBuilder AddChangeMonitoring(this IHostApplicationBuilder builder)
+		{
+			builder.Services.AddHostedService<Worker>();
+			builder.Services.AddSingleton<QueueConsumer>();
+			var rmqConnectionString = new Uri(builder.Configuration.GetConnectionString("rmq")!);
+			builder.UseWolverine(opts =>
+			{
+				opts.UseRabbitMq(rmqConnectionString)
+				.DeclareQueue("db.value_change.configuration.ConfigurationValues", opt =>
+				{
+					opt.AutoDelete = false;
+					opt.IsDurable = true;
+					opt.IsExclusive = false;
+
+				})
+				.DisableDeadLetterQueueing()
+				.AutoProvision();
+
+				opts.PublishAllMessages()
+					.ToRabbitQueue("db.value_change.configuration.ConfigurationValues")
+					.UseDurableOutbox();
+				opts.Durability.Mode = DurabilityMode.Solo;
+			}
+);
 
 			return builder;
 		}

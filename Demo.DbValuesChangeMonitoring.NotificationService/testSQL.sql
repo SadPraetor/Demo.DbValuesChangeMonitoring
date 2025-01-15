@@ -3,7 +3,7 @@ configuration.ConfigurationValues
 set
 [Value] = 22
 where
-[Name] = 'test3'
+[Key] = 'test3'
 
 select 
 *

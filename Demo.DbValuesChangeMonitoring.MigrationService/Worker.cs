@@ -20,7 +20,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("dmigration Worker running at: {time}", DateTimeOffset.Now);
+        _logger.LogInformation("Migration Worker running at: {time}", DateTimeOffset.Now);
         using var scope = _provider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ConfigurationContext>();
 
