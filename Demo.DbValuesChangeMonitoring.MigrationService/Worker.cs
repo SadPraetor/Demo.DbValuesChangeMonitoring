@@ -43,12 +43,22 @@ public class Worker : BackgroundService
         }
 
         ConfigurationValue[] data = [
-            new ConfigurationValue("test1","decimal","12.9"),
-            new ConfigurationValue("test2","string","mytestvalue"),
-			new ConfigurationValue("test3","int","3")
+			new ConfigurationValue("Account:SpendLimit","decimal","30"),
+            new ConfigurationValue("Notifications:Email","string","Enabled"),
+            new ConfigurationValue("Security:TwoFactorAuth","bool","True"),
+            new ConfigurationValue("Display:FontSize","string","Medium"),
+            new ConfigurationValue("Display:Theme","string","Dark"),
+            new ConfigurationValue("Display:NavigationBar","string","Right"),
+            new ConfigurationValue("Privacy:DataSharing","string","ConsentRequired"),
+            new ConfigurationValue("Localization:Language","string","English"),
+            new ConfigurationValue("Performance:CacheSize","string","256MB"),
+            new ConfigurationValue("Accessibility:VoiceOver","bool","On"),
+            new ConfigurationValue("Backup:Frequency","string","Weekly"),
+            new ConfigurationValue("Network:Timeout","string","60s"),
+            new ConfigurationValue("System:UpdateChannel","string","Stable"),
 		];
 
-        context.AddRange(data);
+		context.AddRange(data);
 
         await context.SaveChangesAsync();
         _logger.LogInformation("Application data seeded");
