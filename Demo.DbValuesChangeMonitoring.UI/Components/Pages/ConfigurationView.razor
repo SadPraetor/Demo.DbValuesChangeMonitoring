@@ -2,36 +2,68 @@
 @rendermode InteractiveServer
 
 @using Demo.DbValuesChangeMonitoring.Data
+@using Demo.DbValuesChangeMonitoring.UI.Code
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.Options
+
+@implements IDisposable
 
 @inject IDbContextFactory<ConfigurationContext> _dbContextFactory
-@inject IConfiguration _configuration
+@inject IOptionsMonitor<DisplayOptions> _options
 
 
 <h3>Configuration</h3>
 
 @if(_data is not null)
 {
-	<ConfigurationTable Data="_data" />	
+    <ConfigurationTable Data="_data" />	
 }
 
 <br/>
 
-@(_configuration.GetValue<string>("test3"))
+<b>Font size</b>@(_options.CurrentValue.FontSize)
 
 @code {
-	private List<ConfigurationValue>? _data = null;
+    private List<ConfigurationValue>? _data = null;
+    private IDisposable? _registration;
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			using var context = _dbContextFactory.CreateDbContext();
-			_data = await context.ConfigurationValues
-				.ToListAsync();
-			StateHasChanged();
-		}
+    protected override void OnInitialized()
+    {
+        _registration = _options.OnChange(ReloadPage);
+        base.OnInitialized();
+    }
 
-		await base.OnAfterRenderAsync(firstRender);
-	}
+    private void ReloadPage(DisplayOptions options, string? listener )
+    {
+        this.InvokeAsync(async ()=>
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        });
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task LoadDataAsync()
+    {
+            using var context = _dbContextFactory.CreateDbContext();
+            _data = await context.ConfigurationValues
+                .ToListAsync();
+        
+    }
+
+    public void Dispose()
+    {
+        _registration?.Dispose();
+    }
 }

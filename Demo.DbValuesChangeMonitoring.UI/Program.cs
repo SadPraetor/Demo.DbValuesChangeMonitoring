@@ -1,5 +1,6 @@
 using Demo.DbValuesChangeMonitoring.Data;
 using Demo.DbValuesChangeMonitoring.DatabaseOptionsProvider;
+using Demo.DbValuesChangeMonitoring.UI.Code;
 using Demo.DbValuesChangeMonitoring.UI.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,9 @@ builder.AddDatabaseOptionsProvider();
 
 builder.Services.AddDbContextFactory<ConfigurationContext>(opt => 
     opt.UseSqlServer(builder.Configuration.GetConnectionString("ValuesChangedMonitoring")));
+
+builder.Services.AddOptions<DisplayOptions>()
+    .Bind(builder.Configuration.GetSection("Display"));
 
 var app = builder.Build();
 

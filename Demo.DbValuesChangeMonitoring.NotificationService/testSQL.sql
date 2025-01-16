@@ -1,9 +1,9 @@
 ﻿update
 configuration.ConfigurationValues
 set
-[Value] = 22
+[Value] = 'Medium'
 where
-[Key] = 'test3'
+[Key] = 'Display:FontSize'
 
 select 
 *
