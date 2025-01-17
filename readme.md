@@ -9,6 +9,11 @@
 > One of the clients I worked for had a scenario where configuration settings were stored in database.
 Problem is reading configuration from database and reloading configuration values on change. 
 
+## Startup
+Assume Aspire will take care of everything. Start AppHost project. Docker on standard port is required. 
+Solution will download 2 images, one for MS SQL server, second for RabbitMQ. First startup might take a moment.
+Migration project is present, and will setup the database.
+
 ## Database value change monitoring
 
 ```mermaid
